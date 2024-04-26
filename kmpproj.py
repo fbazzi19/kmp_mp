@@ -14,10 +14,35 @@ def findpattern(text, pname, pattern):
     Function
     Searches for pattern in text and writes the pattern ID and the location of the pattern to a text file
     """
+    #calculate the length of the text and the pattern
+    patternlen = len(pattern)
+    textlen = len(text)
+
+    #create an array of zeros to hold lps
+    lps = np.zeros((patternlen,), dtype=int)
+
+    #calculate lps array
+    computelps(pattern, patternlen, lps)
     return 0
 
 def computelps(pattern, patternlen, lps):
-    return 0
+    """
+    Inputs:
+    pattern: the pattern to be preprocessed
+    patternlen: the length of the pattern
+    lps: an array of zeros of size patternlen
+    Outputs:
+    lps: an array of size pattern len containing the previous location of a prefix within the pattern, if any
+    Function:
+    Fills an array based on the location of prefixes and reoccuring patterns within the pattern string
+    """
+    i=0 #idx on the location within pattern
+    len=0 #idx on the length of the matching prefix
+
+    while i<patternlen: #increment through the pattern
+        i+=1
+
+    return lps
 
 
 if __name__=="__main__":
