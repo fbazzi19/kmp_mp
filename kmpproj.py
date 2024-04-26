@@ -22,7 +22,8 @@ def findpattern(text, pname, pattern):
     lps = np.zeros((patternlen,), dtype=int)
 
     #calculate lps array
-    computelps(pattern, patternlen, lps)
+    lps = computelps(pattern, patternlen, lps)
+    print(lps)
     return 0
 
 def computelps(pattern, patternlen, lps):
@@ -36,11 +37,21 @@ def computelps(pattern, patternlen, lps):
     Function:
     Fills an array based on the location of prefixes and reoccuring patterns within the pattern string
     """
-    i=0 #idx on the location within pattern
+    i=1 #idx on the location within pattern
     len=0 #idx on the length of the matching prefix
 
     while i<patternlen: #increment through the pattern
-        i+=1
+        if pattern[len]==pattern[i]: #if the location matches a prefix
+            len+=1
+            lps[i]=len
+            i+=1
+        else:
+            if len>0: #if the length was greather than zero and it doesn't match
+                len=lps[len-1]
+            else: #if the length was zero and it doesn't match
+                lps[i]=0
+                i+=1
+
 
     return lps
 
