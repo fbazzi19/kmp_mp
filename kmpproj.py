@@ -23,7 +23,22 @@ def findpattern(text, pname, pattern):
 
     #calculate lps array
     lps = computelps(pattern, patternlen, lps)
-    print(lps)
+    
+    i=0 #index on text
+    j=0 #index on pattern
+    while i < textlen:
+        if j==patternlen: #reached the end of the pattern
+            print("pattern found") #TODO: change to write to a file details about pattern
+            j=lps[j-1]
+        elif text[i]==pattern[j]: #match
+            i+=1
+            j+=1
+        else: #not a match
+            if j>0:#hasn't backtracked to the start of the pattern
+                j=lps[j-1]
+            else: #has reached the start of the pattern
+                i+=1
+
     return 0
 
 def computelps(pattern, patternlen, lps):
