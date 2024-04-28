@@ -2,8 +2,10 @@ import multiprocessing
 import sys
 import numpy as np
 from Bio import SeqIO
+import os
 
-def findpattern(text, pname, pattern, outfile):
+
+def findpattern(text, pname, pattern, outfile, lock):
     """
     Inputs:
     text : string pattern is being searched for in
@@ -32,7 +34,11 @@ def findpattern(text, pname, pattern, outfile):
             j+=1
 
         if j==patternlen: #reached the end of the pattern
+            lock.acquire()
+            #print("I am here w seq " + pname)
             outfile.write("Sequence "+ pname +" found at location "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n")
+            print("Seq "+pname+" just wrote to file")
+            lock.release()
             j=lps[j-1]
 
         elif i<textlen and text[i]!=pattern[j]: #not a match
@@ -85,9 +91,20 @@ if __name__=="__main__":
 
     patterns = SeqIO.parse(open(patternsfile),'fasta') 
     f = open("kmpout.txt", "w") #open file to write the location of the patterns to
+    proclist=list()#list to hold the processes for each pattern
     for fasta in patterns:
         #obtain each pattern from the fasta file and send it to the find pattern function
         name, pattern = fasta.id, str(fasta.seq)
-        findpattern(sequence, name, pattern, f)
+        #findpattern(sequence, name, pattern, f)
+        lock=multiprocessing.Lock()
+        px= multiprocessing.Process(target=findpattern, args=(sequence, name, pattern, f, lock))
+        proclist.append(px)
+        px.start()
+        #print("ID of process p1: {}".format(px.pid)) 
+    
+    for px in proclist:
+        px.join()
 
     f.close() #close output file
+
+    
