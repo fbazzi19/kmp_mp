@@ -97,7 +97,7 @@ if __name__=="__main__":
         name, pattern = fasta.id, str(fasta.seq)
         #findpattern(sequence, name, pattern, f)
         lock=multiprocessing.Lock()
-        px= multiprocessing.Process(target=findpattern, args=(sequence, name, pattern, f, lock))
+        px= multiprocessing.Process(target=findpattern, args=(sequence, name, pattern, f, lock)) #TODO:fix, not working, only writing seq 1 and 3 to file
         proclist.append(px)
         px.start()
         #print("ID of process p1: {}".format(px.pid)) 
