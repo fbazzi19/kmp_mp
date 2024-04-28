@@ -3,7 +3,7 @@ import sys
 import numpy as np
 from Bio import SeqIO
 
-def findpattern(text, pname, pattern):
+def findpattern(text, pname, pattern, outfile):
     """
     Inputs:
     text : string pattern is being searched for in
@@ -32,9 +32,7 @@ def findpattern(text, pname, pattern):
             j+=1
 
         if j==patternlen: #reached the end of the pattern
-            f = open("kmpout.txt", "a") #TODO: append within the same run, but write every new run- maybe open in main instead?
-            f.write("Sequence "+ pname +" found at location "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n")
-            f.close()
+            outfile.write("Sequence "+ pname +" found at location "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n")
             j=lps[j-1]
 
         elif i<textlen and text[i]!=pattern[j]: #not a match
@@ -85,9 +83,11 @@ if __name__=="__main__":
         #obtain the sequence as a string from the fasta file
         name, sequence = fasta.id, str(fasta.seq)
 
-    patterns = SeqIO.parse(open(patternsfile),'fasta') #TO CONSIDER: Should the writing to output file happen here or within function
+    patterns = SeqIO.parse(open(patternsfile),'fasta') 
+    f = open("kmpout.txt", "w") #open file to write the location of the patterns to
     for fasta in patterns:
         #obtain each pattern from the fasta file and send it to the find pattern function
         name, pattern = fasta.id, str(fasta.seq)
-        findpattern(sequence, name, pattern)
+        findpattern(sequence, name, pattern, f)
 
+    f.close() #close output file
