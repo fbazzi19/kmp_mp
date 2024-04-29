@@ -106,5 +106,6 @@ if __name__=="__main__":
         px.join()
 
     f.close() #close output file
+    #TODO: Potential solution- use a multiprocessing queue and write the output there first, then write that queue to a file, with locks?
 
     
