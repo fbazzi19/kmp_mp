@@ -5,7 +5,7 @@ from Bio import SeqIO
 import os
 
 
-def findpattern(text, pname, pattern, outfile, lock):
+def findpattern(text, pname, pattern, mpqueue, lock):
     """
     Inputs:
     text : string pattern is being searched for in
@@ -35,9 +35,7 @@ def findpattern(text, pname, pattern, outfile, lock):
 
         if j==patternlen: #reached the end of the pattern
             lock.acquire()
-            #print("I am here w seq " + pname)
-            outfile.write("Sequence "+ pname +" found at location "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n")
-            print("Seq "+pname+" just wrote to file")
+            mpqueue.put("Sequence "+ pname +" found at location "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n") #put the results in a multiprocessing queue
             lock.release()
             j=lps[j-1]
 
@@ -90,22 +88,27 @@ if __name__=="__main__":
         name, sequence = fasta.id, str(fasta.seq)
 
     patterns = SeqIO.parse(open(patternsfile),'fasta') 
-    f = open("kmpout.txt", "w") #open file to write the location of the patterns to
-    proclist=list()#list to hold the processes for each pattern
-    for fasta in patterns:
-        #obtain each pattern from the fasta file and send it to the find pattern function
-        name, pattern = fasta.id, str(fasta.seq)
-        #findpattern(sequence, name, pattern, f)
-        lock=multiprocessing.Lock()
-        px= multiprocessing.Process(target=findpattern, args=(sequence, name, pattern, f, lock)) #TODO:fix, not working, only writing seq 1 and 3 to file
-        proclist.append(px)
-        px.start()
-        #print("ID of process p1: {}".format(px.pid)) 
     
-    for px in proclist:
-        px.join()
+    #queue to put results from all the processes into
+    resultsqueue=multiprocessing.Queue()
+    #lock to avoid adding to queue conflicts
+    lock=multiprocessing.Lock()
+    f = open("kmpout.txt", "w") #open file to write the location of the patterns to
+    #process for each pattern
+    px= [multiprocessing.Process(target=findpattern, args=(sequence, fasta.id, str(fasta.seq), resultsqueue, lock))for fasta in patterns]
+    
+    #start processes
+    for p in px:
+        p.start()
+
+    #join processes
+    for p in px:
+        p.join()
+
+    #write queue to output file
+    for i in range(resultsqueue.qsize()):
+        f.write(resultsqueue.get())
 
     f.close() #close output file
-    #TODO: Potential solution- use a multiprocessing queue and write the output there first, then write that queue to a file, with locks?
 
     
