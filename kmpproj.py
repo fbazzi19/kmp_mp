@@ -127,8 +127,4 @@ if __name__=="__main__":
 
     f.close() #close output file
 
-    #TODO: Consider advantages of having the option to also give output as a fasta file, ie,
-    # > loc : loc #
-    #sequence name 
-    #....
-    #clean fasta files used for testing
+    
