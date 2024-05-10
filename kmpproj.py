@@ -13,8 +13,11 @@ def findpattern(text, pname, pattern, mpqueue, lock):
     pattern : string being searched for
     Outputs:
     none
-    Function
-    Searches for pattern in text and writes the pattern ID and the location of the pattern to a text file
+    Function:
+    Searches for pattern in text and writes the pattern ID and the location of the pattern to a multiprocessing queue.
+    The location is indicative of the index within text, rather than actual chromosome location. Locations are indexed 
+    starting at 1. For more information on the Knuth Morris Pratt algorith used to search for the pattern, see
+    https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm#
     """
     #calculate the length of the text and the pattern
     patternlen = len(pattern)
@@ -35,7 +38,7 @@ def findpattern(text, pname, pattern, mpqueue, lock):
 
         if j==patternlen: #reached the end of the pattern
             lock.acquire()
-            mpqueue.put("Sequence "+ pname +" found at location "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n") #put the results in a multiprocessing queue
+            mpqueue.put("> Sequence "+ pname +" found at location "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n") #put the results in a multiprocessing queue
             lock.release()
             j=lps[j-1]
 
@@ -80,12 +83,21 @@ def computelps(pattern, patternlen, lps):
 if __name__=="__main__":
     #take the fasta files as arguments when the program is run
     seqfile = sys.argv[1]
-    patternsfile = sys.argv[2] #TODO: add a sanity check to return an error if the files arent fasta
+    patternsfile = sys.argv[2]
+
+    #check if both paramaters are fasta files and return an error if not
+    if seqfile.split(".")[-1] != "fasta" or patternsfile.split(".")[-1] != "fasta":
+        sys.exit("Both files must be FASTA files.")
 
     seq = SeqIO.parse(open(seqfile),'fasta')
+    numseqs = 0 #count the number of sequences in the text file
     for fasta in seq:
+        #check if there is more than one sequence in the text file and return an error if so
+        if numseqs > 0:
+            sys.exit("The first FASTA file can only contain one sequence.")
         #obtain the sequence as a string from the fasta file
         name, sequence = fasta.id, str(fasta.seq)
+        numseqs+=1
 
     patterns = SeqIO.parse(open(patternsfile),'fasta') 
     
