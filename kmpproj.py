@@ -38,7 +38,7 @@ def findpattern(text, pname, pattern, mpqueue, lock):
 
         if j==patternlen: #reached the end of the pattern
             lock.acquire()
-            mpqueue.put("> Sequence "+ pname +" found at location "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n") #put the results in a multiprocessing queue
+            mpqueue.put("> "+ pname +": "+ str((i-j)+1) +"-"+str((i-j)+patternlen)+"\n") #put the results in a multiprocessing queue
             lock.release()
             j=lps[j-1]
 
@@ -81,6 +81,10 @@ def computelps(pattern, patternlen, lps):
 
 
 if __name__=="__main__":
+    #check if there are not enough or too many parameters and return an error if so
+    if len(sys.argv)!=3:
+        sys.exit("User must specify exactly 2 parameters.")
+
     #take the fasta files as arguments when the program is run
     seqfile = sys.argv[1]
     patternsfile = sys.argv[2]
@@ -127,6 +131,4 @@ if __name__=="__main__":
     # > loc : loc #
     #sequence name 
     #....
-    #Add error checking to ensure the user gives the correct parameter
     #clean fasta files used for testing
-    #add a readme file to explain project
