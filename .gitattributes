@@ -1,0 +1,2 @@
+GRCh38.p14Chr7.fasta filter=lfs diff=lfs merge=lfs -text
+GRCh38.p14Chr7frags.fasta filter=lfs diff=lfs merge=lfs -text
