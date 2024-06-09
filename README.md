@@ -31,7 +31,7 @@ should return within the output text file 4 lines in total, 2 for each pattern.
 ### SARS-COV-2 Genome Tests
 `covsequence.fasta` contains the complete genome of SARS-COV-2, almost 30,000 bases. `covpatterns.fasta` contains five simple sequences as patterns, each 4-5 bases long.  
 ### GRCh38.p14 Chromosome 7 Tests  
-`GRCh38.14Chr7.zip` contains `GRCh38.p14Chr7.fasta` and `GRCh38.p14Chr7frags.fasta`, compressed into a zip file due to github's limits on size. The former contains the complete sequence of chromosome 7, while the latter contains 4 sequences to be searched for as patterns, with greatly varying lengths. The longest of the patterns is the location of the SHH gene.  
+`GRCh38.p14Chr7.fasta` contains the complete sequence of chromosome 7, and `GRCh38.p14Chr7frags.fasta` contains 4 sequences to be searched for as patterns, with greatly varying lengths. The longest of the patterns is the location of the SHH gene.  
 
 ## References  
 For more information about the Knuth Morris Pratt algorithm, see [the Wikipedia page](https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm#). Much thanks to [this YouTube video](https://www.youtube.com/watch?v=V5-7GzOfADQ) also. FASTA files containing sequence data from chromosome 7 of the human genome along with the genome of SAR-COV-2 gathered from the [National Center for Biotechnology Information](https://www.ncbi.nlm.nih.gov/).
